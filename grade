@@ -1,0 +1,36 @@
+#!/bin/bash
+printf "\n\n### Multiply ###\n\n"
+exe() { printf "\n"; echo "! ${@/eval/}" ; "$@" ; }
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+cd $DIR
+
+rm -f main.exe
+exe make
+ERROR=$?
+if [ $ERROR -eq 0 ]; then
+  printf "\n! run on inputs\n"
+
+  let right=0
+  let wrong=0
+
+  for inputFilename in $( ls input-*.io ); do
+      expectedFilename="${inputFilename/input-/output-}" 
+      caseName="${inputFilename/input-/}" 
+      caseName="${caseName/[.]io/}" 
+      userOutput=$( ./main.exe < $inputFilename )
+      trueOutput=$( cat "$expectedFilename" )
+      printf "\n$caseName:\n  * Your output=$userOutput\n  * True output=$trueOutput\n"
+      if [ "$userOutput" == "$trueOutput" ]; then
+          let right++
+      else
+          let wrong++
+      fi
+  done
+  printf "\n*** Right: $right. Wrong: $wrong. ***\n"
+  let "grade = right * 100 / (right + wrong)"
+else
+  grade=0
+fi
+printf "\n$grade [signature]\n"
+rm -f main.exe
