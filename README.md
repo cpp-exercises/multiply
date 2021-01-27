@@ -1,4 +1,4 @@
-# Multiplu
+# Multiply
 
 This is a sample exercise. The assignment is:
 
